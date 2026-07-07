@@ -137,7 +137,7 @@ graph TD
 ## ⚡ Getting Started
 
 <p align="center">
-  <img src="docs/images/finpilot_setup_pipeline.gif" alt="FinPilot Setup Guide" width="100%" style="border-radius: 8px; border: 1px solid #1e1e2f; margin-bottom: 20px;" />
+  <img src="docs/images/finpilot_setup.gif" alt="FinPilot Setup Guide" width="100%" style="border-radius: 8px; border: 1px solid #1e1e2f; margin-bottom: 20px;" />
 </p>
 
 ### 📋 Prerequisites
@@ -147,6 +147,10 @@ graph TD
 - A Gmail account with an **[App Password](https://support.google.com/accounts/answer/185833)** activated
 
 ---
+
+<p align="center">
+  <img src="docs/images/finpilot_setup_pipeline.gif" alt="FinPilot Installation Pipeline" width="100%" style="border-radius: 8px; border: 1px solid #1e1e2f; margin-bottom: 20px;" />
+</p>
 
 ### Step 1: Clone the Repository
 ```bash
