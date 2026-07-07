@@ -275,6 +275,11 @@ This guarantees that answers are hyper-customized, avoiding generic financial ad
 ---
 
 ## 🗺 Roadmap
+
+<p align="center">
+  <img src="docs/images/finpilot_roadmap.gif" alt="FinPilot AI Features Roadmap" width="100%" style="border-radius: 8px; border: 1px solid #1e1e2f; margin-bottom: 20px;" />
+</p>
+
 - [ ] **Plaid Bank Integration**: Auto-import transaction histories directly.
 - [ ] **Tax Forecast Module**: Real-time tax liability forecasting and optimization tools.
 - [ ] **Multi-Currency Framework**: Dynamic exchange rates based on global FX rates.
