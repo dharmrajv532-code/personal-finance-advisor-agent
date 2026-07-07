@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="docs/images/finpilot_logo.png" alt="FinPilot AI Logo" width="120" style="border-radius: 20px; margin-bottom: 10px;" />
-
 # 🧭 FinPilot AI
 
 ### Personal Finance Advisor — Powered by Groq · Llama 3.3 · Next.js · FastAPI
