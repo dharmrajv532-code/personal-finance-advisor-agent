@@ -4,7 +4,7 @@
 
 ### Personal Finance Advisor — Powered by Groq · Llama 3.3 · Next.js · FastAPI
 
-![FinPilot AI Banner](./docs/images/finpilot_banner.png)
+<img src="docs/images/finpilot_banner.png" alt="FinPilot AI Banner" width="100%" style="border-radius: 12px; margin: 15px 0;" />
 
 ![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=6366F1&center=true&width=600&lines=AI-Powered+Personal+Finance+Dashboard;Real-Time+Market+Insights+%F0%9F%93%88;Smart+Budget+%26+Goal+Tracking+%F0%9F%8E%AF;Context-Aware+Wealth+Advisor+%F0%9F%A4%96)
 
@@ -66,51 +66,40 @@ graph TD
 
 <details>
 <summary><b>🏠 Landing Page</b></summary>
-
-Clean landing page with smooth background grids and clear access routes to registration, login, and interactive sandbox demo modes.
-
-![Landing Page](./docs/images/landing_page.png)
-
+<br>
+<p>Clean landing page with smooth background grids and clear access routes to registration, login, and interactive sandbox demo modes.</p>
+<img src="docs/images/landing_page.png" alt="Landing Page" width="100%" style="border-radius: 8px; border: 1px solid #e2e8f0;" />
 </details>
 
 <details>
 <summary><b>📊 Main Dashboard</b></summary>
-
-An aggregate overview of your financial health indicators, including Health Score calculations, monthly cash flows, expense breakdown donut charts, budget caps, savings targets, and smart notifications.
-
-![Main Dashboard](./docs/images/dashboard_page.png)
-
+<br>
+<p>An aggregate overview of your financial health indicators, including Health Score calculations, monthly cash flows, expense breakdown donut charts, budget caps, savings targets, and smart notifications.</p>
+<img src="docs/images/dashboard_page.png" alt="Main Dashboard" width="100%" style="border-radius: 8px; border: 1px solid #e2e8f0;" />
 </details>
 
 <details>
 <summary><b>🎯 Savings Goals</b></summary>
-
-Establish, top up, and monitor progress metrics for your savings targets (e.g. purchasing electronics, emergency reserves) with detailed progress percentages and timelines.
-
-![Savings Goals](./docs/images/goals_page.png)
-
+<br>
+<p>Establish, top up, and monitor progress metrics for your savings targets (e.g. purchasing electronics, emergency reserves) with detailed progress percentages and timelines.</p>
+<img src="docs/images/goals_page.png" alt="Savings Goals" width="100%" style="border-radius: 8px; border: 1px solid #e2e8f0;" />
 </details>
 
 <details>
 <summary><b>📈 Market Insights Dashboard</b></summary>
-
-Track Nifty 50 and commodity metals (Gold/Silver/Platinum) in real-time. Displays technical Wilder RSI indicator buy/sell opportunities alongside base-100 performance trend charts.
-
-#### Commodity Projections & Signals
-![Market Insights Dashboard](./docs/images/market_page.png)
-
-#### Live Localhost Workspace View
-![Market Insights Workspace](./docs/images/market_page_url.png)
-
+<br>
+<p>Track Nifty 50 and commodity metals (Gold/Silver/Platinum) in real-time. Displays technical Wilder RSI indicator buy/sell opportunities alongside base-100 performance trend charts.</p>
+<h4>Commodity Projections & Signals</h4>
+<img src="docs/images/market_page.png" alt="Market Insights Dashboard" width="100%" style="border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px;" />
+<h4>Live Localhost Workspace View</h4>
+<img src="docs/images/market_page_url.png" alt="Market Insights Workspace" width="100%" style="border-radius: 8px; border: 1px solid #e2e8f0;" />
 </details>
 
 <details>
 <summary><b>🧮 SIP Calculator</b></summary>
-
-Simulate monthly mutual fund investment compound returns with adjustable sliders for investment caps, expected yield percentages, and maturity years.
-
-![SIP Calculator](./docs/images/calculator_page.png)
-
+<br>
+<p>Simulate monthly mutual fund investment compound returns with adjustable sliders for investment caps, expected yield percentages, and maturity years.</p>
+<img src="docs/images/calculator_page.png" alt="SIP Calculator" width="100%" style="border-radius: 8px; border: 1px solid #e2e8f0;" />
 </details>
 
 ---
