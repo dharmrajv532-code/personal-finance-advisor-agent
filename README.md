@@ -4,7 +4,7 @@
 
 ### Personal Finance Advisor — Powered by Groq · Llama 3.3 · Next.js · FastAPI
 
-<img src="docs/images/finpilot_banner.png" alt="FinPilot AI Banner" width="100%" style="border-radius: 12px; margin: 15px 0;" />
+<img src="docs/images/finpilot_banner.gif" alt="FinPilot AI Banner" width="100%" style="border-radius: 12px; margin: 15px 0;" />
 
 ![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=6366F1&center=true&width=600&lines=AI-Powered+Personal+Finance+Dashboard;Real-Time+Market+Insights+%F0%9F%93%88;Smart+Budget+%26+Goal+Tracking+%F0%9F%8E%AF;Context-Aware+Wealth+Advisor+%F0%9F%A4%96)
 
@@ -280,6 +280,12 @@ Contributions make the open-source community amazing!
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
 4. Push to the Branch (`git push origin feature/AmazingFeature`).
 5. Open a Pull Request.
+
+---
+
+## 📨 Contact & Support
+For any questions, feedback, or support regarding FinPilot AI, feel free to reach out:
+* **Email**: [dharmrajv532@gmail.com](mailto:dharmrajv532@gmail.com)
 
 ---
 
