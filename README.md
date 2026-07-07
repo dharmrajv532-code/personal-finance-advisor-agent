@@ -215,6 +215,10 @@ cd finpilot-ai
 
 Full Swagger documentation is accessible at `http://localhost:8001/docs`. Below is a breakdown of the primary endpoints:
 
+<p align="center">
+  <img src="docs/images/finpilot_api_map.gif" alt="FinPilot AI API Network Map" width="100%" style="border-radius: 8px; border: 1px solid #1e1e2f; margin-bottom: 20px;" />
+</p>
+
 ### 🔐 Authentication Operations
 * `POST /auth/register` — Create a new user profile
 * `POST /auth/login` — Authenticate details and obtain JWT token
