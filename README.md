@@ -106,6 +106,10 @@ graph TD
 
 ## 🛠 Tech Stack
 
+<p align="center">
+  <img src="docs/images/finpilot_tech.gif" alt="FinPilot Tech Stack" width="100%" style="border-radius: 8px; border: 1px solid #1e1e2f; margin-bottom: 20px;" />
+</p>
+
 ### Frontend Client
 * **Next.js 16** — App Router, SSR, Server Components
 * **React 19** — Interactive client-side component trees
