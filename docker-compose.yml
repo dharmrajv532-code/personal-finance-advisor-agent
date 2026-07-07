@@ -1,0 +1,28 @@
+services:
+  finance-api:
+    build:
+      context: ./finance-agent-backend
+      dockerfile: Dockerfile
+    container_name: finance_advisor_api
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./finance-agent-backend/data:/app/data
+    env_file:
+      - ./finance-agent-backend/.env
+    restart: unless-stopped
+
+  finance-web:
+    build:
+      context: ./finance-agent-frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8001}
+    container_name: finance_advisor_web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8001}
+    restart: unless-stopped
+    depends_on:
+      - finance-api
