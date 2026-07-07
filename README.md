@@ -48,6 +48,10 @@
 
 FinPilot AI separates user-facing dashboard logic from core processing engines via a decoupled client-server architecture:
 
+<p align="center">
+  <img src="docs/images/finpilot_architecture.gif" alt="FinPilot AI System Architecture" width="100%" style="border-radius: 8px; border: 1px solid #1e1e2f; margin-bottom: 20px;" />
+</p>
+
 ```mermaid
 graph TD
     User([User's Browser]) -->|HTTP / Axios| NextJS_Frontend[Next.js Frontend Dashboard]
