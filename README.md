@@ -27,14 +27,6 @@
 
 ---
 
-## 🎬 Live Walkthrough Demo
-
-<p align="center">
-  <img src="docs/images/finpilot_demo.webp" alt="FinPilot AI Walkthrough" width="100%" style="border-radius: 8px; border: 1px solid #e2e8f0;" />
-</p>
-
----
-
 ## 🌟 Key Features
 
 | Module | What it does |
