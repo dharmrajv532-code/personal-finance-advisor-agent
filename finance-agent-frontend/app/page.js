@@ -26,6 +26,8 @@ import { toast } from 'sonner';
 import ThemeToggle from '@/components/layout/ThemeToggle';
 import PremiumAmbientBackground from '@/components/shared/PremiumAmbientBackground';
 import GeometricShapeCanvas from '@/components/shared/GeometricShapeCanvas';
+import FloatingGeometry from '@/components/shared/FloatingGeometry';
+import AnimatedTrendLines from '@/components/shared/AnimatedTrendLines';
 
 // ScrollReveal component to animate sections as they enter viewport
 function ScrollReveal({ children, className = "", delay = 0 }) {
@@ -40,7 +42,7 @@ function ScrollReveal({ children, className = "", delay = 0 }) {
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.05, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
     );
 
     if (ref.current) {
@@ -57,12 +59,17 @@ function ScrollReveal({ children, className = "", delay = 0 }) {
   return (
     <div
       ref={ref}
-      className={`transition-all duration-1000 ease-out transform ${
+      className={`transform transition-all ${
         isVisible 
           ? 'opacity-100 translate-y-0' 
           : 'opacity-0 translate-y-12'
       } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{ 
+        transitionDelay: `${delay}ms`,
+        transitionDuration: '1000ms',
+        transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        willChange: 'transform, opacity'
+      }}
     >
       {children}
     </div>
@@ -253,6 +260,10 @@ export default function LandingPage() {
       {/* 60fps Premium ambient background canvas */}
       <PremiumAmbientBackground />
 
+      {/* Floating geometry and trend lines in the background */}
+      <FloatingGeometry />
+      <AnimatedTrendLines />
+
       {/* Grid overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
@@ -332,36 +343,48 @@ export default function LandingPage() {
           <GeometricShapeCanvas>
             {/* 4 Cards with Glassmorphism and Hover Translation */}
             <div className="grid grid-cols-2 gap-4 w-full relative z-10">
-              <div className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-5 space-y-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
-                <div className="p-2.5 bg-primary/10 text-primary w-fit rounded-xl">
-                  <Bot className="w-5 h-5" />
+              {/* Card 1 */}
+              <div className="animate-float-card-1 animate-fade-in-up" style={{ animationDelay: '150ms', animationFillMode: 'forwards' }}>
+                <div className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-5 space-y-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 shimmer-hover">
+                  <div className="p-2.5 bg-primary/10 text-primary w-fit rounded-xl">
+                    <Bot className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-sm text-foreground">AI Advisor</h3>
+                  <p className="text-xs text-muted-foreground">Get personal suggestions tailored to your life stage and income levels.</p>
                 </div>
-                <h3 className="font-bold text-sm text-foreground">AI Advisor</h3>
-                <p className="text-xs text-muted-foreground">Get personal suggestions tailored to your life stage and income levels.</p>
               </div>
 
-              <div className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-5 space-y-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-success/5 transition-all duration-300">
-                <div className="p-2.5 bg-success/10 text-success w-fit rounded-xl">
-                  <TrendingUp className="w-5 h-5" />
+              {/* Card 2 */}
+              <div className="animate-float-card-2 animate-fade-in-up" style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}>
+                <div className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-5 space-y-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-success/5 transition-all duration-300 shimmer-hover">
+                  <div className="p-2.5 bg-success/10 text-success w-fit rounded-xl">
+                    <TrendingUp className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-sm text-foreground">Smart Analytics</h3>
+                  <p className="text-xs text-muted-foreground">Monitor cash flows and dynamically track your financial health score.</p>
                 </div>
-                <h3 className="font-bold text-sm text-foreground">Smart Analytics</h3>
-                <p className="text-xs text-muted-foreground">Monitor cash flows and dynamically track your financial health score.</p>
               </div>
 
-              <div className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-5 space-y-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-warning/5 transition-all duration-300">
-                <div className="p-2.5 bg-warning/10 text-warning w-fit rounded-xl">
-                  <Target className="w-5 h-5" />
+              {/* Card 3 */}
+              <div className="animate-float-card-3 animate-fade-in-up" style={{ animationDelay: '450ms', animationFillMode: 'forwards' }}>
+                <div className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-5 space-y-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-warning/5 transition-all duration-300 shimmer-hover">
+                  <div className="p-2.5 bg-warning/10 text-warning w-fit rounded-xl">
+                    <Target className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-sm text-foreground">Savings Goals</h3>
+                  <p className="text-xs text-muted-foreground">Establish goals and track your progress with interactive visualizations.</p>
                 </div>
-                <h3 className="font-bold text-sm text-foreground">Savings Goals</h3>
-                <p className="text-xs text-muted-foreground">Establish goals and track your progress with interactive visualizations.</p>
               </div>
 
-              <div className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-5 space-y-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-info/5 transition-all duration-300">
-                <div className="p-2.5 bg-info/10 text-info w-fit rounded-xl">
-                  <Shield className="w-5 h-5" />
+              {/* Card 4 */}
+              <div className="animate-float-card-4 animate-fade-in-up" style={{ animationDelay: '600ms', animationFillMode: 'forwards' }}>
+                <div className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-5 space-y-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-info/5 transition-all duration-300 shimmer-hover">
+                  <div className="p-2.5 bg-info/10 text-info w-fit rounded-xl">
+                    <Shield className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-bold text-sm text-foreground">Market Signals</h3>
+                  <p className="text-xs text-muted-foreground">Check real-time buy/hold indicators for Gold, Silver, and NIFTY 50.</p>
                 </div>
-                <h3 className="font-bold text-sm text-foreground">Market Signals</h3>
-                <p className="text-xs text-muted-foreground">Check real-time buy/hold indicators for Gold, Silver, and NIFTY 50.</p>
               </div>
             </div>
           </GeometricShapeCanvas>
