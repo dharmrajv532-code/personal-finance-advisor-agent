@@ -63,6 +63,13 @@ export default function PremiumAmbientBackground() {
       }
     }
 
+    const particleColors = [
+      '99, 102, 241',   // #6366f1
+      '129, 140, 248',  // #818cf8
+      '165, 180, 252',  // #a5b4fc
+      '196, 181, 253'   // #c4b5fd
+    ];
+
     // 2. Neural network particles definition
     class Particle {
       constructor() {
@@ -71,8 +78,8 @@ export default function PremiumAmbientBackground() {
         this.r = Math.random() * 1.0 + 1.0; // 1-2px size
         this.vx = (Math.random() - 0.5) * 0.22;
         this.vy = (Math.random() - 0.5) * 0.22;
-        this.baseOpacity = Math.random() * 0.15 + 0.15; // 0.15 to 0.3 opacity
-        this.opacity = this.baseOpacity;
+        this.color = particleColors[Math.floor(Math.random() * particleColors.length)];
+        this.opacity = Math.random() * 0.15 + 0.20; // 0.2 to 0.35 opacity
       }
 
       update() {
@@ -86,10 +93,10 @@ export default function PremiumAmbientBackground() {
         if (this.y > h) this.y = 0;
       }
 
-      draw(colorStr) {
+      draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${colorStr}, ${this.opacity})`;
+        ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
         ctx.fill();
       }
     }
@@ -135,7 +142,7 @@ export default function PremiumAmbientBackground() {
       
       particles.forEach((p) => {
         p.update();
-        p.draw(particleColor);
+        p.draw();
       });
 
       // Draw neural net connections
