@@ -2,14 +2,18 @@
 
 import React, { useEffect, useRef } from 'react';
 
-export default function GeometricShapeCanvas() {
-  const canvasRef = useRef(null);
+export default function GeometricShapeCanvas({ children }) {
+  const backCanvasRef = useRef(null);
+  const frontCanvasRef = useRef(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const backCanvas = backCanvasRef.current;
+    const frontCanvas = frontCanvasRef.current;
+    if (!backCanvas || !frontCanvas) return;
+
+    const backCtx = backCanvas.getContext('2d');
+    const frontCtx = frontCanvas.getContext('2d');
+    if (!backCtx || !frontCtx) return;
 
     // Golden ratio for regular icosahedron vertices construction
     const phi = (1 + Math.sqrt(5)) / 2;
@@ -80,7 +84,9 @@ export default function GeometricShapeCanvas() {
       const displayAngleX = angleX + mouse.targetY * 0.25;
       const displayAngleY = angleY + mouse.targetX * 0.25;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Clear both back and front canvases
+      backCtx.clearRect(0, 0, backCanvas.width, backCanvas.height);
+      frontCtx.clearRect(0, 0, frontCanvas.width, frontCanvas.height);
 
       // Rotate and project vertices
       const rotated = vertices.map(([x, y, z]) => {
@@ -95,8 +101,8 @@ export default function GeometricShapeCanvas() {
         // Perspective projection
         const D = 1100; // Perspective distance
         const scale = D / (D + z2);
-        const px = canvas.width / 2 + x2 * scale;
-        const py = canvas.height / 2 + y1 * scale;
+        const px = backCanvas.width / 2 + x2 * scale;
+        const py = backCanvas.height / 2 + y1 * scale;
 
         return { x: px, y: py, z: z2 };
       });
@@ -105,33 +111,38 @@ export default function GeometricShapeCanvas() {
       const colorBase = isDark ? '129, 140, 248' : '99, 102, 241'; // #818cf8 : #6366f1
       const nodeColor = isDark ? '#818cf8' : '#6366f1';
 
-      // Draw edges with depth sorting (opacity based on Z-depth)
+      // Draw edges with depth sorting (Z-depth determines which canvas and opacity)
       edges.forEach(([u, v]) => {
         const avgZ = (rotated[u].z + rotated[v].z) / 2;
-        // Map avgZ (range -R to R) to opacity
-        // Closer vertices have lower z value (towards camera)
-        const t = (avgZ + R) / (2 * R); // 0 to 1
-        const opacity = (1 - t) * 0.38 + 0.07; // opacity ranges from 0.07 (back) to 0.45 (front)
+        const t = (avgZ + R) / (2 * R); // Normalized Z depth (0 to 1)
+        const opacity = (1 - t) * 0.38 + 0.07; // Opacity ranges from 0.07 (back) to 0.45 (front)
 
-        ctx.beginPath();
-        ctx.moveTo(rotated[u].x, rotated[u].y);
-        ctx.lineTo(rotated[v].x, rotated[v].y);
-        ctx.strokeStyle = `rgba(${colorBase}, ${opacity})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        // Select context based on Z depth:
+        // z <= 0 means closer to camera (front canvas)
+        // z > 0 means farther from camera (back canvas)
+        const activeCtx = avgZ <= 0 ? frontCtx : backCtx;
+
+        activeCtx.beginPath();
+        activeCtx.moveTo(rotated[u].x, rotated[u].y);
+        activeCtx.lineTo(rotated[v].x, rotated[v].y);
+        activeCtx.strokeStyle = `rgba(${colorBase}, ${opacity})`;
+        activeCtx.lineWidth = 1.2;
+        activeCtx.stroke();
       });
 
       // Draw nodes (vertices) with depth sorting
-      rotated.forEach((node, i) => {
+      rotated.forEach((node) => {
         const t = (node.z + R) / (2 * R);
-        const opacity = (1 - t) * 0.75 + 0.15; // opacity ranges from 0.15 to 0.9
+        const opacity = (1 - t) * 0.75 + 0.15; // Opacity ranges from 0.15 to 0.9
 
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = nodeColor;
-        ctx.globalAlpha = opacity;
-        ctx.fill();
-        ctx.globalAlpha = 1.0; // Reset
+        const activeCtx = node.z <= 0 ? frontCtx : backCtx;
+
+        activeCtx.beginPath();
+        activeCtx.arc(node.x, node.y, 3, 0, Math.PI * 2);
+        activeCtx.fillStyle = nodeColor;
+        activeCtx.globalAlpha = opacity;
+        activeCtx.fill();
+        activeCtx.globalAlpha = 1.0; // Reset
       });
 
       animationFrameId = requestAnimationFrame(render);
@@ -147,12 +158,29 @@ export default function GeometricShapeCanvas() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={950}
-      height={950}
-      className="absolute pointer-events-none select-none"
-      style={{ zIndex: 0 }}
-    />
+    <div className="relative max-w-lg mx-auto w-full flex items-center justify-center">
+      {/* Back Canvas: renders elements behind cards (z-index: 0) */}
+      <canvas
+        ref={backCanvasRef}
+        width={950}
+        height={950}
+        className="absolute pointer-events-none select-none"
+        style={{ zIndex: 0 }}
+      />
+      
+      {/* Middle children container: renders the 4 cards (z-index: 10) */}
+      <div className="relative w-full z-10">
+        {children}
+      </div>
+
+      {/* Front Canvas: renders elements in front of cards (z-index: 20) */}
+      <canvas
+        ref={frontCanvasRef}
+        width={950}
+        height={950}
+        className="absolute pointer-events-none select-none"
+        style={{ zIndex: 20 }}
+      />
+    </div>
   );
 }

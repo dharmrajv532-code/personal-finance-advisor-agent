@@ -328,10 +328,8 @@ export default function LandingPage() {
 
           </div>
 
-          {/* Hero Feature cards with 3D wireframe geometry behind them */}
-          <div className="relative max-w-lg mx-auto w-full flex items-center justify-center">
-            <GeometricShapeCanvas />
-            
+          {/* Hero Feature cards with 3D wireframe geometry around them (sandwich depth layer) */}
+          <GeometricShapeCanvas>
             {/* 4 Cards with Glassmorphism and Hover Translation */}
             <div className="grid grid-cols-2 gap-4 w-full relative z-10">
               <div className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-5 space-y-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
@@ -366,7 +364,7 @@ export default function LandingPage() {
                 <p className="text-xs text-muted-foreground">Check real-time buy/hold indicators for Gold, Silver, and NIFTY 50.</p>
               </div>
             </div>
-          </div>
+          </GeometricShapeCanvas>
         </div>
 
         {/* Section 2: How It Works */}
