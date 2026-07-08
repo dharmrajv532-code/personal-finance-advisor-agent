@@ -102,10 +102,7 @@ export default function LandingPage() {
   const [wordIndex, setWordIndex] = useState(0);
   const [fadeClass, setFadeClass] = useState('opacity-100 translate-y-0');
 
-  // Stats Counters
-  const [usersCount, setUsersCount] = useState(0);
-  const [trackedCount, setTrackedCount] = useState(0);
-  const [satisfactionCount, setSatisfactionCount] = useState(0);
+
 
   // Form states
   const [email, setEmail] = useState('');
@@ -153,27 +150,7 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Stats count-up animation (2 seconds duration)
-  useEffect(() => {
-    let startTimestamp = null;
-    const duration = 2000;
 
-    const step = (timestamp) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      const ease = progress * (2 - progress); // EaseOutQuad
-
-      setUsersCount(Math.floor(ease * 10000));
-      setTrackedCount(Math.floor(ease * 50));
-      setSatisfactionCount(Math.floor(ease * 98));
-
-      if (progress < 1) {
-        window.requestAnimationFrame(step);
-      }
-    };
-
-    window.requestAnimationFrame(step);
-  }, []);
 
   const handleAuthAction = async (e) => {
     e.preventDefault();
@@ -348,34 +325,7 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* Premium Animated Stats Bar */}
-            <div className="pt-8 border-t border-border/50 max-w-lg mx-auto md:mx-0">
-              <div className="grid grid-cols-3 gap-4 text-center md:text-left">
-                <div>
-                  <div className="text-xl sm:text-2xl font-extrabold text-foreground transition-all duration-300">
-                    {usersCount.toLocaleString()}+
-                  </div>
-                  <div className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 font-medium uppercase tracking-wider">Users</div>
-                </div>
-                <div className="border-r border-border/40 h-8 self-center" />
-                <div className="pl-2">
-                  <div className="text-xl sm:text-2xl font-extrabold text-foreground transition-all duration-300">
-                    ₹{trackedCount}Cr+
-                  </div>
-                  <div className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 font-medium uppercase tracking-wider">Tracked</div>
-                </div>
-                <div className="border-r border-border/40 h-8 self-center" />
-                <div className="pl-2">
-                  <div className="text-xl sm:text-2xl font-extrabold text-foreground transition-all duration-300">
-                    {satisfactionCount}%
-                  </div>
-                  <div className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 font-medium uppercase tracking-wider">Satisfaction</div>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground/80 mt-4 italic">
-                * Trusted by students, professionals & families across India.
-              </p>
-            </div>
+
           </div>
 
           {/* Hero Feature cards with 3D wireframe geometry behind them */}
@@ -469,82 +419,7 @@ export default function LandingPage() {
           </div>
         </ScrollReveal>
 
-        {/* Section 3: Testimonials */}
-        <ScrollReveal className="py-12 border-t border-border/40">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-extrabold text-foreground tracking-tight sm:text-4xl">
-              User Testimonials
-            </h2>
-            <p className="text-sm md:text-base text-muted-foreground mt-2">
-              Hear what students, professionals, and freelancers say about their AI co-pilot.
-            </p>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {/* Card 1 */}
-            <ScrollReveal className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-6 hover:-translate-y-2 hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-6" delay={100}>
-              <div className="space-y-3">
-                <div className="flex gap-1 text-amber-500">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
-                </div>
-                <p className="text-sm text-foreground/80 leading-relaxed italic">
-                  "FinPilot helped me save ₹15,000 in just 2 months! The budget tracker is extremely intuitive and helps check leakages."
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-indigo-500 text-white flex items-center justify-center font-bold text-sm shrink-0">
-                  RS
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-foreground">Rohit S.</h4>
-                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Software Engineer</p>
-                </div>
-              </div>
-            </ScrollReveal>
-
-            {/* Card 2 */}
-            <ScrollReveal className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-6 hover:-translate-y-2 hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-6" delay={200}>
-              <div className="space-y-3">
-                <div className="flex gap-1 text-amber-500">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
-                </div>
-                <p className="text-sm text-foreground/80 leading-relaxed italic">
-                  "The AI advisor gave me better advice than my bank! It calculated accurate goal coordinates for my college fees."
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-success to-emerald-500 text-white flex items-center justify-center font-bold text-sm shrink-0">
-                  PM
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-foreground">Priya M.</h4>
-                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">College Student</p>
-                </div>
-              </div>
-            </ScrollReveal>
-
-            {/* Card 3 */}
-            <ScrollReveal className="bg-white/10 dark:bg-white/[0.02] backdrop-blur-md border border-white/20 dark:border-white/[0.08] rounded-2xl p-6 hover:-translate-y-2 hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-6" delay={300}>
-              <div className="space-y-3">
-                <div className="flex gap-1 text-amber-500">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
-                </div>
-                <p className="text-sm text-foreground/80 leading-relaxed italic">
-                  "Market signals feature is a game changer for my investments. Tracking gold, silver, and NIFTY 50 is incredibly fast."
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-warning to-amber-500 text-white flex items-center justify-center font-bold text-sm shrink-0">
-                  AK
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-foreground">Arjun K.</h4>
-                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Freelancer</p>
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </ScrollReveal>
 
         {/* Section 4: FAQ */}
         <ScrollReveal className="py-12 border-t border-border/40">
