@@ -20,7 +20,7 @@ export default function GeometricShapeCanvas() {
     ];
 
     // Scale unit vertices to the desired size
-    const R = 265; // Shape radius
+    const R = 370; // Shape radius
     const vertices = rawVertices.map(([x, y, z]) => {
       const len = Math.hypot(x, y, z);
       return [ (x / len) * R, (y / len) * R, (z / len) * R ];
@@ -93,7 +93,7 @@ export default function GeometricShapeCanvas() {
         let z2 = -x * Math.sin(displayAngleY) + z1 * Math.cos(displayAngleY);
 
         // Perspective projection
-        const D = 800; // Perspective distance
+        const D = 1100; // Perspective distance
         const scale = D / (D + z2);
         const px = canvas.width / 2 + x2 * scale;
         const py = canvas.height / 2 + y1 * scale;
@@ -149,8 +149,8 @@ export default function GeometricShapeCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      width={700}
-      height={700}
+      width={950}
+      height={950}
       className="absolute pointer-events-none select-none"
       style={{ zIndex: 0 }}
     />
