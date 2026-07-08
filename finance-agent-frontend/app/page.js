@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { toast } from 'sonner';
 import ThemeToggle from '@/components/layout/ThemeToggle';
 import CrystalCanvas from '@/components/shared/CrystalCanvas';
+import GeometricShapeCanvas from '@/components/shared/GeometricShapeCanvas';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -196,37 +197,40 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto w-full">
-          <div className="bg-card border border-border rounded-2xl p-5 space-y-3 hover:translate-y-[-4px] transition-transform shadow-sm">
-            <div className="p-2.5 bg-primary/10 text-primary w-fit rounded-xl">
-              <Bot className="w-5 h-5" />
+        <div className="relative max-w-lg mx-auto w-full flex items-center justify-center">
+          <GeometricShapeCanvas />
+          <div className="grid grid-cols-2 gap-4 w-full relative z-10">
+            <div className="bg-card border border-border rounded-2xl p-5 space-y-3 hover:translate-y-[-4px] transition-transform shadow-sm">
+              <div className="p-2.5 bg-primary/10 text-primary w-fit rounded-xl">
+                <Bot className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-sm text-foreground">AI Advisor</h3>
+              <p className="text-xs text-muted-foreground">Get personal suggestions tailored to your life stage and income levels.</p>
             </div>
-            <h3 className="font-bold text-sm text-foreground">AI Advisor</h3>
-            <p className="text-xs text-muted-foreground">Get personal suggestions tailored to your life stage and income levels.</p>
-          </div>
 
-          <div className="bg-card border border-border rounded-2xl p-5 space-y-3 hover:translate-y-[-4px] transition-transform shadow-sm">
-            <div className="p-2.5 bg-success/10 text-success w-fit rounded-xl">
-              <TrendingUp className="w-5 h-5" />
+            <div className="bg-card border border-border rounded-2xl p-5 space-y-3 hover:translate-y-[-4px] transition-transform shadow-sm">
+              <div className="p-2.5 bg-success/10 text-success w-fit rounded-xl">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-sm text-foreground">Smart Analytics</h3>
+              <p className="text-xs text-muted-foreground">Monitor cash flows and dynamically track your financial health score.</p>
             </div>
-            <h3 className="font-bold text-sm text-foreground">Smart Analytics</h3>
-            <p className="text-xs text-muted-foreground">Monitor cash flows and dynamically track your financial health score.</p>
-          </div>
 
-          <div className="bg-card border border-border rounded-2xl p-5 space-y-3 hover:translate-y-[-4px] transition-transform shadow-sm">
-            <div className="p-2.5 bg-warning/10 text-warning w-fit rounded-xl">
-              <Target className="w-5 h-5" />
+            <div className="bg-card border border-border rounded-2xl p-5 space-y-3 hover:translate-y-[-4px] transition-transform shadow-sm">
+              <div className="p-2.5 bg-warning/10 text-warning w-fit rounded-xl">
+                <Target className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-sm text-foreground">Savings Goals</h3>
+              <p className="text-xs text-muted-foreground">Establish goals and track your progress with interactive visualizations.</p>
             </div>
-            <h3 className="font-bold text-sm text-foreground">Savings Goals</h3>
-            <p className="text-xs text-muted-foreground">Establish goals and track your progress with interactive visualizations.</p>
-          </div>
 
-          <div className="bg-card border border-border rounded-2xl p-5 space-y-3 hover:translate-y-[-4px] transition-transform shadow-sm">
-            <div className="p-2.5 bg-info/10 text-info w-fit rounded-xl">
-              <Shield className="w-5 h-5" />
+            <div className="bg-card border border-border rounded-2xl p-5 space-y-3 hover:translate-y-[-4px] transition-transform shadow-sm">
+              <div className="p-2.5 bg-info/10 text-info w-fit rounded-xl">
+                <Shield className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-sm text-foreground">Market Signals</h3>
+              <p className="text-xs text-muted-foreground">Check real-time buy/hold indicators for Gold, Silver, and NIFTY 50.</p>
             </div>
-            <h3 className="font-bold text-sm text-foreground">Market Signals</h3>
-            <p className="text-xs text-muted-foreground">Check real-time buy/hold indicators for Gold, Silver, and NIFTY 50.</p>
           </div>
         </div>
       </main>

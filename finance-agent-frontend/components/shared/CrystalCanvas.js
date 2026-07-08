@@ -46,10 +46,10 @@ export default function CrystalCanvas() {
         this.vy = (Math.random() - 0.5) * 0.4;
         
         // Visuals
-        this.size = Math.random() * 15 + 10; // 10px to 25px size
+        this.size = Math.random() * 18 + 12; // 12px to 30px size (slightly larger)
         this.angle = Math.random() * Math.PI * 2;
         this.rotationSpeed = (Math.random() - 0.5) * 0.005;
-        this.opacity = Math.random() * 0.15 + 0.1; // 0.1 to 0.25 opacity
+        this.opacity = Math.random() * 0.2 + 0.25; // 0.25 to 0.45 opacity (more visible)
         
         // Colors
         this.color1 = '#6366f1';
@@ -74,13 +74,13 @@ export default function CrystalCanvas() {
         if (mouse.x !== null && mouse.y !== null) {
           const dx = mouse.x - this.baseX;
           const dy = mouse.y - this.baseY;
-          const dist = Math.hypot(dx, dy);
+          const dist = Math.hypot(dx, dy) || 0.1; // Prevent division by zero
 
           if (dist < 150) {
             // Attract position towards mouse
             const force = (150 - dist) / 150;
-            const targetX = this.baseX + (dx / dist) * (150 - dist) * 0.35;
-            const targetY = this.baseY + (dy / dist) * (150 - dist) * 0.35;
+            const targetX = this.baseX + (dx / dist) * (150 - dist) * 0.4; // Slightly stronger attraction
+            const targetY = this.baseY + (dy / dist) * (150 - dist) * 0.4;
 
             // Ease towards target
             this.x += (targetX - this.x) * 0.08;
@@ -115,14 +115,18 @@ export default function CrystalCanvas() {
         gradient.addColorStop(0, this.color1);
         gradient.addColorStop(1, this.color2);
 
+        // Neon glow styling (extremely premium)
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = this.color1;
+
         ctx.fillStyle = gradient;
         ctx.globalAlpha = this.opacity;
         ctx.fill();
 
         // Optional very thin glow stroke
         ctx.strokeStyle = this.color2;
-        ctx.globalAlpha = this.opacity * 0.4;
-        ctx.lineWidth = 1;
+        ctx.globalAlpha = this.opacity * 0.7; // Brighter stroke
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
         ctx.restore();
@@ -162,7 +166,7 @@ export default function CrystalCanvas() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: -1 }}
+      style={{ zIndex: 1 }}
     />
   );
 }
