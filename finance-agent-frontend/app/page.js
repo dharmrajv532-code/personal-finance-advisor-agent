@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Shield, Sparkles, TrendingUp, Target, BarChart3, Bot, Key, Mail, Lock, User, Briefcase, IndianRupee, ArrowRight, X } from 'lucide-react';
 import api from '@/lib/api';
 import { toast } from 'sonner';
+import ThemeToggle from '@/components/layout/ThemeToggle';
+import CrystalCanvas from '@/components/shared/CrystalCanvas';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -128,6 +130,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col justify-between">
+      <CrystalCanvas />
       {/* Dynamic Animated Blobs */}
       <div className="absolute top-[-20%] left-[-10%] w-[550px] h-[550px] bg-primary/15 rounded-full blur-[130px] pointer-events-none animate-blob1" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[650px] h-[650px] bg-secondary/20 rounded-full blur-[150px] pointer-events-none animate-blob2" />
@@ -149,12 +152,15 @@ export default function LandingPage() {
             <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-widest mt-0.5">Your Financial Co-Pilot</span>
           </div>
         </div>
-        <button
-          onClick={() => { setAuthMode('login'); setShowAuthModal(true); }}
-          className="px-4 py-2 text-sm font-semibold border border-border rounded-lg bg-card hover:bg-background-secondary transition-colors cursor-pointer"
-        >
-          Sign In
-        </button>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <button
+            onClick={() => { setAuthMode('login'); setShowAuthModal(true); }}
+            className="px-4 py-2 text-sm font-semibold border border-border rounded-lg bg-card hover:bg-background-secondary transition-colors cursor-pointer"
+          >
+            Sign In
+          </button>
+        </div>
       </nav>
 
       <main className="max-w-7xl mx-auto w-full px-6 md:px-12 py-12 md:py-24 grid md:grid-cols-2 gap-12 items-center z-10 flex-1">
