@@ -111,7 +111,7 @@ export default function PremiumAmbientBackground() {
 
     // Initialize Particles (30-40, throttle on mobile or when prefers-reduced-motion)
     const particles = [];
-    const particleCount = prefersReducedMotion ? 0 : isMobile ? 12 : 35;
+    const particleCount = prefersReducedMotion ? 0 : isMobile ? 25 : 80;
     for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle());
     }
@@ -145,9 +145,9 @@ export default function PremiumAmbientBackground() {
           const dy = particles[i].y - particles[j].y;
           const dist = Math.hypot(dx, dy);
 
-          if (dist < 120) {
-            // Stronger opacity closer to each other, max 0.1 opacity
-            const opacity = (1 - dist / 120) * 0.10;
+          if (dist < 100) {
+            // Stronger opacity closer to each other, max 0.07 opacity
+            const opacity = (1 - dist / 100) * 0.07;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
