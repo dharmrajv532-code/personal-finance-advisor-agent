@@ -6,19 +6,22 @@ from typing import Optional
 # ---------- User ----------
 class UserCreate(BaseModel):
     name: str
-    age: int
-    income: float
-    occupation: str
+    email: str
+    password: str
+    age: Optional[int] = None
+    income: Optional[float] = None
+    occupation: Optional[str] = None
 
 
 class UserResponse(BaseModel):
     id: int
     name: str
-    age: int
-    income: float
-    occupation: str
+    age: Optional[int] = None
+    income: Optional[float] = None
+    occupation: Optional[str] = None
     life_stage: Optional[str] = None
     risk_profile: Optional[str] = None
+    email: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -81,9 +84,6 @@ class UserRegister(BaseModel):
     name: str
     email: str
     password: str
-    age: int
-    income: float
-    occupation: str
 
 #---------user------------
 class UserLogin(BaseModel):

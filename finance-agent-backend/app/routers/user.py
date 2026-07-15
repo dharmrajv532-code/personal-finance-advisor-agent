@@ -9,17 +9,33 @@ router = APIRouter(prefix="/user", tags=["User"])
 
 @router.post("/", response_model=schemas.UserResponse)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    stage_info = detect_life_stage(
-        age=user.age, occupation=user.occupation, income=user.income
-    )
+    existing = db.query(models.User).filter(models.User.email == user.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    age_val = user.age
+    occupation_val = user.occupation
+    income_val = user.income
+
+    if age_val is not None and occupation_val is not None and income_val is not None:
+        stage_info = detect_life_stage(age=age_val, occupation=occupation_val, income=income_val)
+        life_stage = stage_info["life_stage"]
+        risk_profile = stage_info["risk_profile"]
+    else:
+        life_stage = None
+        risk_profile = None
+
+    from app.core.security import hash_password
 
     db_user = models.User(
         name=user.name,
-        age=user.age,
-        income=user.income,
-        occupation=user.occupation,
-        life_stage=stage_info["life_stage"],
-        risk_profile=stage_info["risk_profile"],
+        email=user.email,
+        hashed_password=hash_password(user.password),
+        age=age_val,
+        income=income_val,
+        occupation=occupation_val,
+        life_stage=life_stage,
+        risk_profile=risk_profile,
     )
     db.add(db_user)
     db.commit()
@@ -49,6 +65,17 @@ def update_user(user_id: int, data: schemas.UserUpdate, db: Session = Depends(ge
         db_user.income = data.income
     if data.occupation is not None:
         db_user.occupation = data.occupation
+
+    # Auto-calculate life_stage and risk_profile if required fields are present
+    age_val = data.age if data.age is not None else db_user.age
+    occupation_val = data.occupation if data.occupation is not None else db_user.occupation
+    income_val = data.income if data.income is not None else db_user.income
+
+    if age_val is not None and occupation_val is not None and income_val is not None:
+        stage_info = detect_life_stage(age=age_val, occupation=occupation_val, income=income_val)
+        db_user.life_stage = stage_info["life_stage"]
+        db_user.risk_profile = stage_info["risk_profile"]
+
     if data.risk_profile is not None:
         db_user.risk_profile = data.risk_profile
     if data.life_stage is not None:
