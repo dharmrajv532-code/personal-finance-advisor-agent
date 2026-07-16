@@ -170,7 +170,7 @@ export default function LandingPage() {
         toast.success('Logged in successfully!');
         router.push('/dashboard');
       } else if (authMode === 'register') {
-        if (!name || !email || !password || !age || !income || !occupation) {
+        if (!name || !email || !password) {
           toast.error('All fields are required');
           setLoading(false);
           return;
@@ -180,15 +180,16 @@ export default function LandingPage() {
           name,
           email,
           password,
-          age: parseInt(age),
-          income: parseFloat(income),
-          occupation,
         };
 
         await api.post('/auth/register', registerData);
-        toast.success('Registration successful! Please login.');
-        setPassword('');
-        setAuthMode('login');
+        
+        // Auto-login on successful registration
+        const loginRes = await api.post('/auth/login', { email, password });
+        localStorage.setItem('token', loginRes.data.access_token);
+        
+        toast.success('Registration successful! Welcome to FinPilot.');
+        router.push('/onboarding');
       } else if (authMode === 'forgot') {
         if (!email) {
           toast.error('Email is required');
@@ -673,61 +674,6 @@ export default function LandingPage() {
                 </div>
               )}
 
-              {authMode === 'register' && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-muted-foreground block">Age</label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                      <input
-                        type="number"
-                        value={age}
-                        onChange={(e) => setAge(e.target.value)}
-                        placeholder="25"
-                        min="1"
-                        max="120"
-                        className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:border-primary transition-colors"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-muted-foreground block">Occupation</label>
-                    <div className="relative">
-                      <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                      <select
-                        value={occupation}
-                        onChange={(e) => setOccupation(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:border-primary transition-colors"
-                        required
-                      >
-                        <option value="">Select...</option>
-                        <option value="student">Student</option>
-                        <option value="freelancer">Freelancer</option>
-                        <option value="professional">Professional</option>
-                        <option value="business_owner">Business Owner</option>
-                        <option value="retired">Retired / Other</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 space-y-1">
-                    <label className="text-xs font-semibold text-muted-foreground block">Annual Income (INR)</label>
-                    <div className="relative">
-                      <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                      <input
-                        type="number"
-                        value={income}
-                        onChange={(e) => setIncome(e.target.value)}
-                        placeholder="600000"
-                        className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:border-primary transition-colors"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {authMode === 'reset' && (
                 <>

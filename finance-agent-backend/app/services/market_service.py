@@ -15,17 +15,17 @@ _cache = {}
 CACHE_TTL_SECONDS = 900  # 15 minutes
 
 
-def fetch_yahoo_prices(symbol: str):
+def fetch_yahoo_prices(symbol: str, range_str: str = "3mo"):
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
     params = {
-        "range": "3mo",
+        "range": range_str,
         "interval": "1d"
     }
     try:
-        response = requests.get(url, headers=headers, params=params, timeout=3.0)
+        response = requests.get(url, headers=headers, params=params, timeout=5.0)
         if response.status_code == 200:
             result = response.json()
             chart_data = result.get("chart", {}).get("result", [None])[0]
@@ -34,10 +34,13 @@ def fetch_yahoo_prices(symbol: str):
                 close_prices = chart_data.get("indicators", {}).get("quote", [{}])[0].get("close", [])
                 # Pair and filter out None values
                 valid_data = [(t, p) for t, p in zip(timestamps, close_prices) if p is not None]
-                return valid_data
+                return {
+                    "meta": chart_data.get("meta", {}),
+                    "prices": valid_data
+                }
     except Exception as e:
         print(f"Error downloading {symbol} via Yahoo API: {e}")
-    return []
+    return {"meta": {}, "prices": []}
 
 
 def get_usd_to_inr():
@@ -50,8 +53,9 @@ def get_usd_to_inr():
     try:
         # Fetch USDINR exchange rate
         data = fetch_yahoo_prices("USDINR=X")
-        if data:
-            rate = float(data[-1][1])
+        prices = data.get("prices", []) if isinstance(data, dict) else data
+        if prices:
+            rate = float(prices[-1][1])
             _cache[cache_key] = {"rate": rate, "expires_at": now + CACHE_TTL_SECONDS}
             return rate
     except Exception:
@@ -135,15 +139,21 @@ def get_market_analysis(asset_type: str):
         last_data_date = cached_entry["last_data_date"]
         recent_history = cached_entry["history"]
     else:
-        data = fetch_yahoo_prices(symbol)
-        if not data or len(data) < 14:
+        res = fetch_yahoo_prices(symbol)
+        prices_data = res.get("prices", [])
+        meta = res.get("meta", {})
+        if not prices_data or len(prices_data) < 14:
             use_fallback = True
         else:
             try:
-                timestamps = [item[0] for item in data]
-                prices = [float(item[1]) for item in data]
+                timestamps = [item[0] for item in prices_data]
+                prices = [float(item[1]) for item in prices_data]
                 
-                latest_price = prices[-1]
+                # Fetch latest available trading price
+                latest_price = meta.get("regularMarketPrice")
+                if latest_price is None:
+                    latest_price = prices[-1]
+                
                 latest_rsi = calculate_rsi(prices, 14)
                 latest_sma20 = calculate_sma(prices, 20)
                 latest_sma50 = calculate_sma(prices, 50)
@@ -152,12 +162,16 @@ def get_market_analysis(asset_type: str):
                 explanation = generate_explanation(asset_type, latest_rsi, latest_sma20, latest_sma50, signal)
                 
                 # Format last data date
-                dt = datetime.fromtimestamp(timestamps[-1])
+                market_time = meta.get("regularMarketTime")
+                if market_time:
+                    dt = datetime.fromtimestamp(market_time)
+                else:
+                    dt = datetime.fromtimestamp(timestamps[-1])
                 last_data_date = dt.strftime("%Y-%m-%d")
                 
                 # Format recent 6-day history
                 recent_history = []
-                for t, p in data[-6:]:
+                for t, p in prices_data[-6:]:
                     h_dt = datetime.fromtimestamp(t)
                     date_str = h_dt.strftime("%m-%d")
                     val = float(p)

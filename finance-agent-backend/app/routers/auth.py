@@ -21,17 +21,15 @@ def register(request: Request, user: schemas.UserRegister, db: Session = Depends
         log_action(db, action="register", endpoint="/auth/register", status="failed", detail="Email already registered")
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    stage_info = detect_life_stage(age=user.age, occupation=user.occupation, income=user.income)
-
     db_user = models.User(
         name=user.name,
         email=user.email,
         hashed_password=hash_password(user.password),
-        age=user.age,
-        income=user.income,
-        occupation=user.occupation,
-        life_stage=stage_info["life_stage"],
-        risk_profile=stage_info["risk_profile"],
+        age=None,
+        income=None,
+        occupation=None,
+        life_stage=None,
+        risk_profile=None,
     )
     db.add(db_user)
     db.commit()

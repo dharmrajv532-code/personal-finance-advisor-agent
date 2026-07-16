@@ -7,9 +7,9 @@ import { Toaster } from 'sonner';
 
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
-  const isLandingPage = pathname === '/';
+  const isStandalone = pathname === '/' || pathname === '/onboarding';
 
-  if (isLandingPage) {
+  if (isStandalone) {
     return (
       <>
         {children}

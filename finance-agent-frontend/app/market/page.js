@@ -20,7 +20,7 @@ import StatCard from '@/components/shared/StatCard';
 import CurrencyDisplay from '@/components/shared/CurrencyDisplay';
 import { StatsRowSkeleton, ChartSkeleton } from '@/components/shared/Skeletons';
 import EmptyState from '@/components/shared/EmptyState';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Brush } from 'recharts';
 import { toast } from 'sonner';
 
 export default function MarketPage() {
@@ -29,6 +29,23 @@ export default function MarketPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
+  
+  const [historyData, setHistoryData] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState('5Y');
+
+  const fetchMarketHistory = async () => {
+    setHistoryLoading(true);
+    try {
+      const res = await api.get('/market/history/stock,gold,silver,platinum');
+      setHistoryData(res.data);
+    } catch (err) {
+      console.error('Failed to load market history', err);
+      toast.error('Failed to load historical price charts.');
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
 
   const fetchMarketData = async (showToast = false) => {
     if (showToast) setRefreshing(true);
@@ -37,7 +54,10 @@ export default function MarketPage() {
       const res = await api.get('/market/stock,gold,silver,platinum');
       setData(res.data);
       setLastUpdated(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-      if (showToast) toast.success('Market insights refreshed successfully!');
+      if (showToast) {
+        await fetchMarketHistory();
+        toast.success('Market insights refreshed successfully!');
+      }
     } catch (err) {
       console.error(err);
       toast.error('Failed to load market rates.');
@@ -50,6 +70,7 @@ export default function MarketPage() {
   useEffect(() => {
     if (user) {
       fetchMarketData();
+      fetchMarketHistory();
     }
   }, [user]);
 
@@ -172,48 +193,70 @@ export default function MarketPage() {
 
   const recommendation = generateDynamicRecommendation(assets);
 
-  // Compile combined historical data from backend response with normalization (Base 100 on Day 1)
-  const chartData = [];
-  if (data?.assets) {
-    const stockHistory = assets.stock?.history || [];
-    const goldHistory = assets.gold?.history || [];
-    const silverHistory = assets.silver?.history || [];
-    const platinumHistory = assets.platinum?.history || [];
-    
-    // Day 1 prices for indexing to base 100
-    const day1Stock = stockHistory[0]?.value || 1;
-    const day1Gold = goldHistory[0]?.value || 1;
-    const day1Silver = silverHistory[0]?.value || 1;
-    const day1Platinum = platinumHistory[0]?.value || 1;
-    
+  // Compile combined historical data from backend response with normalization (Base 100 on start of selected range)
+  const getFilteredChartData = () => {
+    if (!historyData) return [];
+
+    const stockHist = historyData.stock || [];
+    const goldHist = historyData.gold || [];
+    const silverHist = historyData.silver || [];
+    const platinumHist = historyData.platinum || [];
+
+    if (stockHist.length === 0) return [];
+
+    // Find the latest date in stock history
+    const latestDateStr = stockHist[stockHist.length - 1].date;
+    const latestDate = new Date(latestDateStr);
+
+    let cutoffDate = new Date(latestDate);
+    if (timeRange === '1W') cutoffDate.setDate(latestDate.getDate() - 7);
+    else if (timeRange === '1M') cutoffDate.setMonth(latestDate.getMonth() - 1);
+    else if (timeRange === '3M') cutoffDate.setMonth(latestDate.getMonth() - 3);
+    else if (timeRange === '6M') cutoffDate.setMonth(latestDate.getMonth() - 6);
+    else if (timeRange === '1Y') cutoffDate.setFullYear(latestDate.getFullYear() - 1);
+    else cutoffDate.setFullYear(latestDate.getFullYear() - 5); // 5Y
+
+    const filterFn = (h) => h.filter(item => new Date(item.date) >= cutoffDate);
+    const fStock = filterFn(stockHist);
+    const fGold = filterFn(goldHist);
+    const fSilver = filterFn(silverHist);
+    const fPlatinum = filterFn(platinumHist);
+
+    const day1Stock = fStock[0]?.value || 1;
+    const day1Gold = fGold[0]?.value || 1;
+    const day1Silver = fSilver[0]?.value || 1;
+    const day1Platinum = fPlatinum[0]?.value || 1;
+
     const maxLength = Math.max(
-      stockHistory.length,
-      goldHistory.length,
-      silverHistory.length,
-      platinumHistory.length
+      fStock.length,
+      fGold.length,
+      fSilver.length,
+      fPlatinum.length
     );
-    
+
+    const combined = [];
     for (let i = 0; i < maxLength; i++) {
-      const sPoint = stockHistory[i];
-      const gPoint = goldHistory[i];
-      const svPoint = silverHistory[i];
-      const pPoint = platinumHistory[i];
-      
-      chartData.push({
+      const sPoint = fStock[i];
+      const gPoint = fGold[i];
+      const svPoint = fSilver[i];
+      const pPoint = fPlatinum[i];
+
+      combined.push({
         date: sPoint?.date || gPoint?.date || svPoint?.date || pPoint?.date || '',
-        // Indexed to Base 100 (relative percentage)
         Nifty: sPoint?.value ? parseFloat(((sPoint.value / day1Stock) * 100).toFixed(2)) : null,
         Gold: gPoint?.value ? parseFloat(((gPoint.value / day1Gold) * 100).toFixed(2)) : null,
         Silver: svPoint?.value ? parseFloat(((svPoint.value / day1Silver) * 100).toFixed(2)) : null,
         Platinum: pPoint?.value ? parseFloat(((pPoint.value / day1Platinum) * 100).toFixed(2)) : null,
-        // Raw values for tooltip
         NiftyRaw: sPoint?.value,
         GoldRaw: gPoint?.value,
         SilverRaw: svPoint?.value,
         PlatinumRaw: pPoint?.value,
       });
     }
-  }
+    return combined;
+  };
+
+  const chartData = getFilteredChartData();
 
   // Custom Recharts Tooltip showing Commodity Name + Value + Date + Normalization Base
   const CustomTooltip = ({ active, payload }) => {
@@ -284,7 +327,12 @@ export default function MarketPage() {
             <p className="text-sm text-muted-foreground">Real-time commodity indicators and trade signals</p>
             {lastUpdated && (
               <span className="text-[10px] bg-background-tertiary px-2 py-0.5 rounded-full text-muted-foreground font-mono">
-                Updated: {lastUpdated}
+                Refreshed: {lastUpdated}
+              </span>
+            )}
+            {assets.stock?.last_data_date && (
+              <span className="text-[10px] bg-background-tertiary px-2 py-0.5 rounded-full text-muted-foreground font-mono">
+                Last updated: {assets.stock.last_data_date}
               </span>
             )}
           </div>
@@ -366,31 +414,64 @@ export default function MarketPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Commodity Chart (60%) */}
-        <div className="bg-card border border-border rounded-xl p-6 shadow-sm flex flex-col h-[350px] lg:col-span-2 select-none">
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">Commodity Projections</h3>
-            <p className="text-xs text-muted-foreground">6-Day Price Trend (Indexed to Base 100)</p>
+        <div className="bg-card border border-border rounded-xl p-6 shadow-sm flex flex-col h-[460px] lg:col-span-2 select-none">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Historical Price Comparison</h3>
+              <p className="text-xs text-muted-foreground">Performance relative to range start (Base 100)</p>
+            </div>
+            
+            {/* Time range buttons */}
+            <div className="flex items-center gap-1 bg-background-secondary p-1 rounded-lg border border-border">
+              {['1W', '1M', '3M', '6M', '1Y', '5Y'].map((range) => (
+                <button
+                  key={range}
+                  onClick={() => setTimeRange(range)}
+                  className={cn(
+                    "px-2.5 py-1 text-xs font-bold rounded-md transition-colors cursor-pointer",
+                    timeRange === range
+                      ? "bg-primary text-white"
+                      : "text-muted-foreground hover:bg-background-tertiary"
+                  )}
+                >
+                  {range}
+                </button>
+              ))}
+            </div>
           </div>
-
+ 
           <div className="flex-1 relative mt-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 10, right: 10, left: -5, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
-                <XAxis dataKey="date" stroke="var(--text-muted)" fontSize={11} tickLine={false} />
-                <YAxis 
-                  stroke="var(--text-muted)" 
-                  fontSize={11} 
-                  tickLine={false}
-                  label={{ value: '% Change (Base 100)', angle: -90, position: 'insideLeft', offset: -5, style: { fill: 'var(--text-muted)', fontSize: '10px' } }}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend verticalAlign="top" height={36} />
-                <Line type="monotone" name="Nifty 50" dataKey="Nifty" stroke="#10B981" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                <Line type="monotone" name="Gold" dataKey="Gold" stroke="#F59E0B" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                <Line type="monotone" name="Silver" dataKey="Silver" stroke="#6366F1" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-                <Line type="monotone" name="Platinum" dataKey="Platinum" stroke="#06B6D4" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-              </LineChart>
-            </ResponsiveContainer>
+            {historyLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 10, right: 10, left: -5, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
+                  <XAxis dataKey="date" stroke="var(--text-muted)" fontSize={11} tickLine={false} />
+                  <YAxis 
+                    stroke="var(--text-muted)" 
+                    fontSize={11} 
+                    tickLine={false}
+                    label={{ value: '% Change (Base 100)', angle: -90, position: 'insideLeft', offset: -5, style: { fill: 'var(--text-muted)', fontSize: '10px' } }}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend verticalAlign="top" height={36} />
+                  <Line type="monotone" name="Nifty 50" dataKey="Nifty" stroke="#10B981" strokeWidth={2} dot={false} activeDot={{ r: 5 }} />
+                  <Line type="monotone" name="Gold" dataKey="Gold" stroke="#F59E0B" strokeWidth={2} dot={false} activeDot={{ r: 5 }} />
+                  <Line type="monotone" name="Silver" dataKey="Silver" stroke="#6366F1" strokeWidth={2} dot={false} activeDot={{ r: 5 }} />
+                  <Line type="monotone" name="Platinum" dataKey="Platinum" stroke="#06B6D4" strokeWidth={2} dot={false} activeDot={{ r: 5 }} />
+                  <Brush 
+                    dataKey="date" 
+                    height={20} 
+                    stroke="var(--border)" 
+                    fill="var(--background-secondary)" 
+                    tickFormatter={() => ""}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
