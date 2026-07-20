@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import api from '@/lib/api';
 import { decodeToken } from '@/lib/utils';
@@ -9,10 +9,10 @@ export function useAuth() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const mutateUser = (newData) => {
+  const mutateUser = useCallback((newData) => {
     localStorage.setItem('userInfo', JSON.stringify(newData));
     setUser(newData);
-  };
+  }, []);
 
   const isProfileComplete = (userData) => {
     return (
