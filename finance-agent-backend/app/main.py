@@ -1,30 +1,27 @@
 from fastapi import FastAPI
+# pyrefly: ignore [missing-import]
 from slowapi import _rate_limit_exceeded_handler
+# pyrefly: ignore [missing-import]
 from slowapi.errors import RateLimitExceeded
 from app.core.rate_limiter import limiter
 from app.database import Base, engine
 from app import models
 from app.routers import auth, expenses, market, income, goals, budget, ai_router, analytics, calculator, notifications, user
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
+
 app = FastAPI(
     title="Personal Finance Advisor Agent",
     swagger_ui_parameters={"persistAuthorization": True}
 )
 
 
+# Split CORS origins by comma and strip whitespaces
+cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-        "http://localhost:3002",
-        "http://127.0.0.1:3002",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

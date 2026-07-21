@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./data/finance.db"
     GMAIL_ADDRESS: str = ""
     GMAIL_APP_PASSWORD: str = ""
+    CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001,http://localhost:3002,http://127.0.0.1:3002,http://localhost:8000,http://127.0.0.1:8000"
 
     class Config:
         env_file = ".env"
