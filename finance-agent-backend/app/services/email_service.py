@@ -28,7 +28,7 @@ This code will expire in 10 minutes. If you did not request this, please ignore 
     msg.attach(MIMEText(body, "plain"))
 
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10.0)
         server.starttls()
         server.login(settings.GMAIL_ADDRESS, settings.GMAIL_APP_PASSWORD)
         server.sendmail(settings.GMAIL_ADDRESS, to_email, msg.as_string())
@@ -110,7 +110,7 @@ def send_market_recommendation_email(to_email: str, user_name: str, recommendati
     msg.attach(MIMEText(html_body, "html"))
 
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10.0)
         server.starttls()
         server.login(settings.GMAIL_ADDRESS, settings.GMAIL_APP_PASSWORD)
         server.sendmail(settings.GMAIL_ADDRESS, to_email, msg.as_string())

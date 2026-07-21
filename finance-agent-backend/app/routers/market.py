@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services.market_service import get_market_analysis, generate_recommendation
@@ -32,6 +32,7 @@ def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(oaut
 @router.get("/{asset_types}")
 def market_analysis(
     asset_types: str,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
 ):
@@ -100,7 +101,9 @@ def market_analysis(
         if user_cooldown_key not in _email_sent_cooldown or _email_sent_cooldown[user_cooldown_key] < now:
             user = db.query(models.User).filter(models.User.id == user_id).first()
             if user and user.email:
-                send_market_recommendation_email(
+                # Send email in the background to avoid blocking the API response
+                background_tasks.add_task(
+                    send_market_recommendation_email,
                     to_email=user.email,
                     user_name=user.name,
                     recommendation=recommendation,

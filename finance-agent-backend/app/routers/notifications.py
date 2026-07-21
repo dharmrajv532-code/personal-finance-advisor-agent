@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services.email_digest import generate_digest, send_digest_email
@@ -22,22 +22,22 @@ def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(oaut
 
 @router.post("/send-digest")
 def send_monthly_digest(
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id)
 ):
     digest = generate_digest(db, user_id)
     
-    sent = send_digest_email(
+    # Send email in the background to avoid blocking the API response
+    background_tasks.add_task(
+        send_digest_email,
         to_email=digest["email"],
         subject=f"Monthly Financial Digest - {digest['month']}/{digest['year']}",
         html_body=digest["html_body"]
     )
     
-    if not sent:
-        raise HTTPException(status_code=500, detail="Email bhejne mein problem aayi")
-    
     return {
-        "message": f"Digest email bhej diya {digest['email']} pe!",
+        "message": f"Digest email sending initiated for {digest['email']}!",
         "month": digest["month"],
         "year": digest["year"]
     }
