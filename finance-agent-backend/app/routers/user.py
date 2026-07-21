@@ -40,6 +40,22 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+
+    # Auto-populate current month income if provided
+    if income_val is not None and income_val > 0:
+        from datetime import datetime
+        now = datetime.utcnow()
+        db_income = models.Income(
+            user_id=db_user.id,
+            amount=income_val,
+            source="Onboarding Base Income",
+            month=now.month,
+            year=now.year,
+            note="Automatically added during profile setup."
+        )
+        db.add(db_income)
+        db.commit()
+
     return db_user
 
 
@@ -83,4 +99,26 @@ def update_user(user_id: int, data: schemas.UserUpdate, db: Session = Depends(ge
         
     db.commit()
     db.refresh(db_user)
+
+    # Auto-populate current month income if not already present
+    if income_val is not None and income_val > 0:
+        from datetime import datetime
+        now = datetime.utcnow()
+        existing_income = db.query(models.Income).filter(
+            models.Income.user_id == db_user.id,
+            models.Income.month == now.month,
+            models.Income.year == now.year
+        ).first()
+        if not existing_income:
+            db_income = models.Income(
+                user_id=db_user.id,
+                amount=income_val,
+                source="Onboarding Base Income",
+                month=now.month,
+                year=now.year,
+                note="Automatically added during profile setup."
+            )
+            db.add(db_income)
+            db.commit()
+
     return db_user
