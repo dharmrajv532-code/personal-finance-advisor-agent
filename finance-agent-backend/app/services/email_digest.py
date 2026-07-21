@@ -10,6 +10,11 @@ from app.core.config import settings
 
 
 def send_digest_email(to_email: str, subject: str, html_body: str) -> bool:
+    # Use Resend if API Key is configured
+    if settings.RESEND_API_KEY:
+        from app.services.email_service import send_email_via_resend
+        return send_email_via_resend(to_email, subject, html_body)
+
     if not settings.GMAIL_ADDRESS or not settings.GMAIL_APP_PASSWORD:
         try:
             print(f"\n[DEMO MODE - Gmail credentials not set in .env]\nDigest sent to {to_email}:\nHTML body generated successfully.\n")
