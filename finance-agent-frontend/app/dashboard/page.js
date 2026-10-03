@@ -111,13 +111,27 @@ export default function Dashboard() {
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <AlertTriangle className="w-12 h-12 text-danger mb-4" />
         <h3 className="text-lg font-bold">Unable to load dashboard</h3>
-        <p className="text-sm text-muted-foreground mt-1 mb-6">There was an issue connecting to the servers.</p>
-        <button
-          onClick={fetchDashboardData}
-          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors font-medium cursor-pointer"
-        >
-          Try Again
-        </button>
+        <p className="text-sm text-muted-foreground mt-1 mb-6">
+          Your session may have expired or the server could not be reached.
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={fetchDashboardData}
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors font-medium cursor-pointer"
+          >
+            Try Again
+          </button>
+          <button
+            onClick={() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('userInfo');
+              router.push('/');
+            }}
+            className="px-4 py-2 border border-border text-foreground rounded-lg hover:bg-card transition-colors font-medium cursor-pointer"
+          >
+            Sign In Again
+          </button>
+        </div>
       </div>
     );
   }

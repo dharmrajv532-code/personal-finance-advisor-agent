@@ -36,7 +36,7 @@ export function useAuth() {
     }
 
     const payload = decodeToken(token);
-    if (!payload || !payload.user_id) {
+    if (!payload || !payload.user_id || (payload.exp && Date.now() >= payload.exp * 1000)) {
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo');
       setIsLoading(false);
@@ -59,11 +59,12 @@ export function useAuth() {
           router.push('/dashboard');
         }
       } catch (e) {
-        fetchUser(payload.user_id);
+        // Parse error, proceed to fetch
       }
-    } else {
-      fetchUser(payload.user_id);
     }
+    
+    // Always revalidate with backend to ensure token and user are still valid
+    fetchUser(payload.user_id);
 
     async function fetchUser(userId) {
       try {
