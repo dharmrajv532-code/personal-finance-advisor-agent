@@ -56,7 +56,7 @@ class ExpenseResponse(BaseModel):
 
 # ---------- Goal ----------
 class GoalCreate(BaseModel):
-    user_id: int
+    user_id: Optional[int] = None
     title: str
     target_amount: float
     deadline: Optional[datetime] = None

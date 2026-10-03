@@ -213,6 +213,19 @@ cd finpilot-ai
 
 ---
 
+### Step 4: Running Automated Tests
+Run the entire end-to-end verification suite (backend automated unit & integration tests + frontend production build check):
+```bash
+python run_tests.py
+```
+Or run the backend test suite directly:
+```bash
+cd finance-agent-backend
+python -m unittest discover tests -v
+```
+
+---
+
 ## 📡 API Reference
 
 Full Swagger documentation is accessible at `http://localhost:8001/docs`. Below is a breakdown of the primary endpoints:
