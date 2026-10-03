@@ -84,6 +84,9 @@ class UserRegister(BaseModel):
     name: str
     email: str
     password: str
+    age: Optional[int] = None
+    income: Optional[float] = None
+    occupation: Optional[str] = None
 
 #---------user------------
 class UserLogin(BaseModel):

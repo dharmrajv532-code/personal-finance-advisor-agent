@@ -21,19 +21,43 @@ def register(request: Request, user: schemas.UserRegister, db: Session = Depends
         log_action(db, action="register", endpoint="/auth/register", status="failed", detail="Email already registered")
         raise HTTPException(status_code=400, detail="Email already registered")
 
+    age_val = getattr(user, "age", None)
+    income_val = getattr(user, "income", None)
+    occupation_val = getattr(user, "occupation", None)
+    life_stage = None
+    risk_profile = None
+
+    if age_val is not None and occupation_val is not None and income_val is not None:
+        stage_info = detect_life_stage(age=age_val, occupation=occupation_val, income=income_val)
+        life_stage = stage_info.get("life_stage")
+        risk_profile = stage_info.get("risk_profile")
+
     db_user = models.User(
         name=user.name,
         email=user.email,
         hashed_password=hash_password(user.password),
-        age=None,
-        income=None,
-        occupation=None,
-        life_stage=None,
-        risk_profile=None,
+        age=age_val,
+        income=income_val,
+        occupation=occupation_val,
+        life_stage=life_stage,
+        risk_profile=risk_profile,
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+
+    if income_val is not None and income_val > 0:
+        now = datetime.utcnow()
+        db_income = models.Income(
+            user_id=db_user.id,
+            amount=income_val,
+            source="Onboarding Base Income",
+            month=now.month,
+            year=now.year,
+            note="Automatically added during registration."
+        )
+        db.add(db_income)
+        db.commit()
 
     log_action(db, action="register", endpoint="/auth/register", status="success", user_id=db_user.id, detail=f"User {user.email} registered")
     return db_user

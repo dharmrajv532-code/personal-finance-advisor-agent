@@ -42,15 +42,24 @@ export default function Dashboard() {
     try {
       const [dashRes, alertsRes, predRes] = await Promise.all([
         api.get('/analytics/dashboard'),
-        api.get('/analytics/alerts'),
-        api.get('/analytics/predictions')
+        api.get('/analytics/alerts').catch((e) => {
+          console.warn('Alerts fetch fallback:', e);
+          return { data: { alerts: [] } };
+        }),
+        api.get('/analytics/predictions').catch((e) => {
+          console.warn('Predictions fetch fallback:', e);
+          return { data: null };
+        })
       ]);
 
       setData(dashRes.data);
-      setAlerts(alertsRes.data || []);
+      const alertsList = Array.isArray(alertsRes.data) 
+        ? alertsRes.data 
+        : (alertsRes.data?.alerts || []);
+      setAlerts(alertsList);
       setPredictions(predRes.data);
     } catch (err) {
-      console.error(err);
+      console.error('Dashboard load error:', err);
       setError(true);
       toast.error('Failed to load dashboard statistics.');
     } finally {
